@@ -1,0 +1,23 @@
+# Build the Docker image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/csv-to-parquet', '.']
+# Push the Docker image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/csv-to-parquet']
+# Deploy the Cloud Run service
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - 'run'
+  - 'deploy'
+  - 'csv-to-parquet'
+  - '--image'
+  - 'gcr.io/$PROJECT_ID/csv-to-parquet'
+  - '--platform'
+  - 'managed'
+  # Add any additional arguments here, such as environment variables or service account
+  # configurations.
+  env:
+  - 'ENV_VAR_1=value1'
+  - 'ENV_VAR_2=value2'
+  # Set the project ID for the gcloud command.
+  projectId: '$PROJECT_ID'
