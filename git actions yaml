@@ -1,4 +1,4 @@
-name: Deploy Cloud Function
+name: Deploy to GCP Cloud Function
 
 on:
   push:
@@ -7,19 +7,33 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Cloud SDK
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Set up Python
+      uses: actions/setup-python@v2
       with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
-    - name: Deploy Cloud Function
+        python-version: '3.9'
+        
+    - name: Install dependencies
       run: |
-        gcloud functions deploy my-function \
-          --region us-central1 \
-          --runtime nodejs14 \
-          --trigger-resource my-bucket \
+        python -m pip install --upgrade pip
+        pip install google-cloud-functions
+        
+    - name: Deploy function
+      env:
+        PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        FUNCTION_NAME: send_event_to_cloud_run
+        REGION: us-central1
+        RUNTIME: python39
+        BUCKET_NAME: csvsupriya1
+      run: |
+        gcloud.cmd functions deploy $FUNCTION_NAME ^
+          --project $PROJECT_ID ^
+          --region $REGION ^
+          --runtime $RUNTIME ^
+          --entry-point main ^
+          --trigger-resource $BUCKET_NAME ^
           --trigger-event google.storage.object.finalize
