@@ -1,0 +1,43 @@
+name: Deploy to GCP Cloud Function
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+      
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install google-cloud-functions
+        
+    - name: Deploy function
+      env:
+        PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        FUNCTION_NAME: send_event_to_cloud_run
+        REGION: us-central1
+        RUNTIME: python39
+      run: |
+        gcloud.cmd functions deploy $FUNCTION_NAME ^
+          --project $PROJECT_ID ^
+          --region $REGION ^
+          --runtime $RUNTIME ^
+          --entry-point main ^
+          --trigger-event google.storage.object.finalize
