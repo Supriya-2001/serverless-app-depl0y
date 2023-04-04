@@ -41,7 +41,7 @@ jobs:
         #REGION: us-central1
         #RUNTIME: python39
       run: |
-        gcloud functions deploy cloud-fun-to-trigger-gcs --project meta-sensor-380711 --region  us-central1 --runtime python39 --entry-point send_event_to_cloud_run  --trigger-event google.storage.object.finalize  
+        gcloud functions deploy cloud-fun-to-trigger-gcs --project meta-sensor-380711 --region  us-central1 --runtime python39 --entry-point send_event_to_cloud_run  --trigger-event google.storage.object.finalize --trigger-resource="csvfile-bucket" 
       
 
            
