@@ -29,15 +29,15 @@ jobs:
         pip install google-cloud-functions
         
     - name: Deploy function
-      env:
-        PROJECT_ID: ${{ secrets.PROJECT_ID }}
-        FUNCTION_NAME: send_event_to_cloud_run
-        REGION: us-central1
-        RUNTIME: python39
+      #env:
+        #PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        #FUNCTION_NAME: send_event_to_cloud_run
+        #REGION: us-central1
+        #RUNTIME: python39
       run: |
-        gcloud.cmd functions deploy $FUNCTION_NAME ^
-          --project $PROJECT_ID ^
-          --region $REGION ^
-          --runtime $RUNTIME ^
-          --entry-point main ^
+        gcloud.cmd functions deploy cloud-fun-to-trigger-gcs ^
+          --project meta-sensor-380711 ^
+          --region  us-central1 ^
+          --runtime python39 ^
+          --entry-point send_event_to_cloud_run ^
           --trigger-event google.storage.object.finalize
