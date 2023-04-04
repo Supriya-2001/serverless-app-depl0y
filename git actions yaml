@@ -1,3 +1,4 @@
+#deploy cloud fnction
 name: Deploy to GCP Cloud Function
 
 on:
