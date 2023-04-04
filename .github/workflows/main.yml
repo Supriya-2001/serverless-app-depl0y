@@ -34,7 +34,7 @@ jobs:
       with:
         version: '>= 363.0.0'
         project_id: ${{secrets.PROJECT_ID}}
-        
+    #deplying the function
     - name: Deploy function
       #env:
         #PROJECT_ID: ${{ secrets.PROJECT_ID }}
