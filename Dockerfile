@@ -1,27 +1,22 @@
-# Use an official Python runtime as a parent image
+FROM google/cloud-sdk:latest
 
-FROM python:3.11.2-slim-bullseye
+RUN apt-get update && \
+    apt-get install -y python3-pip && \
+    pip3 install --upgrade pip && \
+    pip3 install google-cloud-functions
 
-# Set the working directory to /app
+ENV PROJECT_ID=meta-sensor-380711
+ENV FUNCTION_NAME=send_event_to_cloud_run
+ENV REGION=us-central1
+ENV RUNTIME=python39
 
 WORKDIR /app
 
-# Copy the requirements file into the container
+COPY main.py /app
 
-COPY requirements.txt .
-
-# Install the dependencies
-
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the Flask app code into the container
-
-COPY main.py .
-
-# Expose the port that the Flask app will run on
-
-EXPOSE 8080
-
-# Start the Flask app when the container starts
-
-CMD ["python3", "main.py"]
+CMD gcloud functions deploy $FUNCTION_NAME \
+        --project $PROJECT_ID \
+        --region $REGION \
+        --runtime $RUNTIME \
+        --entry-point main \
+        --trigger-event google.storage.object.finalize
