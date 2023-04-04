@@ -28,7 +28,7 @@ jobs:
         FUNCTION_NAME: send_event_to_cloud_run
         REGION: us-central1
         RUNTIME: python39
-        BUCKET_NAME: csvsupriya1
+        BUCKET_NAME: csvfile-bucket
       run: |
         gcloud.cmd functions deploy $FUNCTION_NAME ^
           --project $PROJECT_ID ^
